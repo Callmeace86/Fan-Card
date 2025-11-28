@@ -3,567 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ana Gabriel - Verificación de Membresía de Fan</title>
+    <title>Estado de Entrega</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         :root {
-            --primary: #8B2C3C;
-            --primary-light: #C44569;
-            --primary-dark: #5A1A27;
-            --accent: #D4AF37;
-            --accent-light: #E6C547;
-            --neutral-dark: #1a1a1a;
-            --neutral-light: #f5f5f5;
-            --text-primary: #2d2d2d;
-            --text-secondary: #666666;
-            --border: #e0e0e0;
-            --warning: #F57C00;
+            --primary: #2c2c2c;
+            --accent: #ffffff;
+            --neutral-100: #f5f5f5;
+            --neutral-500: #808080;
+            --status-pending: #ff9500;
+            --status-success: #34c759;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
             background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
-            color: var(--text-primary);
-            transition: background-color 0.3s ease;
         }
 
-        body.dark-mode {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: var(--neutral-light);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        /* Enhanced animations */
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(196, 69, 105, 0.4); }
-            50% { box-shadow: 0 0 0 15px rgba(196, 69, 105, 0); }
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: -1000px 0;
-            }
-            100% {
-                background-position: 1000px 0;
-            }
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .card-container {
-            animation: slideInUp 0.8s ease-out;
-        }
-
-        .detail-item {
-            animation: slideInUp 0.6s ease-out;
-        }
-
-        .header-title {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        /* Enhanced card styling with premium feel */
-        .fan-card {
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            padding: 2.5rem;
-            background: white;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        body.dark-mode .fan-card {
-            background: #2d2d2d;
-            border-color: #444;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .fan-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, transparent, rgba(212, 175, 55, 0.08));
-            transition: all 0.6s ease;
-        }
-
-        .fan-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 30px 80px rgba(139, 44, 60, 0.2);
-            border-color: var(--accent);
-        }
-
-        /* Enhanced photo styling */
-        .photo-container {
-            width: 160px;
-            height: 200px;
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
             border-radius: 12px;
-            overflow: hidden;
-            border: 4px solid var(--accent);
-            margin: 0 auto 2rem;
-            box-shadow: 0 15px 40px rgba(196, 69, 105, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .photo-container:hover {
-            transform: scale(1.08) rotateZ(2deg);
-            box-shadow: 0 20px 50px rgba(196, 69, 105, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-        }
-
-        .photo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Sticky music player with enhanced styling */
-        .music-player {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: white;
-            border-radius: 50px;
-            padding: 1.2rem;
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
-            z-index: 50;
-            animation: slideInLeft 0.5s ease-out, float 3s ease-in-out infinite;
-            transition: all 0.3s ease;
-            border: 2px solid var(--accent);
-        }
-
-        body.dark-mode .music-player {
-            background: #2d2d2d;
-            border: 2px solid var(--accent);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
-        }
-
-        .music-player:hover {
-            box-shadow: 0 20px 60px rgba(196, 69, 105, 0.3);
-            transform: scale(1.1);
-        }
-
-        .player-btn {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) var(--primary-light));
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 6px 20px rgba(139, 44, 60, 0.3);
-            font-weight: bold;
-        }
-
-        .player-btn:hover {
-            transform: scale(1.12);
-            box-shadow: 0 10px 30px rgba(196, 69, 105, 0.4);
-        }
-
-        .player-btn:active {
-            transform: scale(0.92);
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 1rem 0;
-        }
-
-        .header h1 {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            /* background: linear-gradient(135deg, var(--primary) var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text; */
-            color: black;
-        }
-
-        body.dark-mode .header h1 {
-            background: linear-gradient(135deg, var(--primary-light) var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .divider {
-            width: 80px;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary-light));
-            margin: 0.5rem auto 1rem;
-            border-radius: 3px;
-            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
-        }
-
-        /* Enhanced membership badge */
-        .membership-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--accent) var(--accent-light));
-            color: var(--primary-dark);
-            padding: 0.75rem 2rem;
-            border-radius: 30px;
-            font-weight: 800;
-            font-size: 0.95rem;
-            margin-top: 0.5rem;
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-        }
-
-        /* Status to show "not verified" */
-        .proof-status {
-            background: linear-gradient(135deg, #FFF3CD, #FFE5B4);
-            border-left: 5px solid var(--warning);
-            padding: 1.2rem;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin: 1.5rem 0;
-            box-shadow: 0 4px 12px rgba(245, 124, 0, 0.15);
-        }
-
-        body.dark-mode .proof-status {
-            background: linear-gradient(135deg, #B26A00, #8B5200);
-            border-left-color: var(--accent);
-        }
-
-        .proof-status-icon {
-            font-size: 1.8rem;
-        }
-
-        .proof-status-text {
-            font-weight: 700;
-            color: var(--warning);
-            font-size: 1rem;
-        }
-
-        body.dark-mode .proof-status-text {
-            color: var(--accent-light);
-        }
-
-        /* Enhanced detail items */
-        .detail-item {
-            padding: 1.2rem;
-            margin-bottom: 1rem;
-            border-left: 5px solid var(--primary-light);
-            background: var(--neutral-light);
-            border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .detail-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.05), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        body.dark-mode .detail-item {
-            background: #1a1a1a;
-            border-left-color: var(--primary);
-        }
-
-        .detail-item:hover {
-            transform: translateX(10px);
-            box-shadow: 0 8px 20px rgba(196, 69, 105, 0.15);
-            border-left-color: var(--accent);
-        }
-
-        .detail-item:hover::before {
-            opacity: 1;
-        }
-
-        .detail-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 1.3px;
-            color: var(--primary);
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-
-        .detail-value {
-            font-size: 1.05rem;
             font-weight: 600;
-            color: var(--text-primary);
+            font-size: 14px;
         }
 
-        body.dark-mode .detail-value {
-            color: var(--neutral-light);
+        .status-pending {
+            background: #fff3cd;
+            color: #ff9500;
         }
 
-        /* Enhanced buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) var(--primary-light));
-            color: white;
-            padding: 1.1rem 2.5rem;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 8px 25px rgba(139, 44, 60, 0.3);
+        .status-success {
+            background: #d4edda;
+            color: #34c759;
+        }
+
+        .translate-btn {
+            transition: all 0.3s ease;
+        }
+
+        .translate-btn:hover {
+            transform: scale(1.05);
+            background: rgba(44, 44, 44, 0.1);
+        }
+
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .info-card {
+            padding: 24px;
+            border-radius: 16px;
+            background: var(--neutral-100);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--neutral-500);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
         }
 
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: left 0.3s ease;
+        .info-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 35px rgba(196, 69, 105, 0.4);
+        .header-accent {
+            border-bottom: 3px solid var(--primary);
+            display: inline-block;
+            padding-bottom: 4px;
         }
 
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary:active {
-            transform: translateY(-1px);
-        }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            .fan-card {
-                padding: 1.5rem;
-            }
-
-            .music-player {
-                bottom: 1rem;
-                right: 1rem;
-            }
-
-            .header {
-                margin-bottom: 2rem;
-            }
-
-            .player-btn {
-                width: 48px;
-                height: 48px;
+        @media (max-width: 768px) {
+            .info-section {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b-2 border-accent dark:bg-gray-900/95 dark:border-gray-700">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+    <div class="min-h-screen py-8 px-4 md:px-8">
+        <!-- Header with Translate Button -->
+        <div class="max-w-4xl mx-auto mb-12 flex justify-between items-center">
             <div>
-                <h2 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-700 to-red-600 bg-clip-text text-transparent">
-                    Ana Gabriel
-                </h2>
-                <p class="text-xs text-gray-600 dark:text-gray-400 font-semibold tracking-wide">
-                    Verificación Club de Fans
-                </p>
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
+                    <span class="header-accent" data-es="Estado de Entrega" data-en="Delivery Status"></span>
+                </h1>
+                <p class="text-gray-600 text-lg" data-es="Detalles completos de tu entrega" data-en="Complete details of your delivery"></p>
             </div>
+            <button onclick="toggleLanguage()" class="translate-btn px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-lg font-semibold text-gray-800 transition-all">
+                <span data-es="English" data-en="Español"></span>
+            </button>
         </div>
-    </header>
 
-    <!-- Main content -->
-    <main class="min-h-screen py-8 sm:py-12">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6">
-            <!-- Header -->
-            <div class="header header-title">
-                <h1">Verificación de Membresía</h1>
-                <div class="divider"></div>
-                <p>Revisa los detalles de tu membresía de fan antes de pagar</p>
-                <div class="membership-badge">
-                    ✨ Completa Tu Perfil
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto">
+            <!-- Customer Information -->
+            <div class="glass-card rounded-2xl p-8 md:p-12 shadow-lg mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-8" data-es="Información del Cliente" data-en="Customer Information"></h2>
+                
+                <div class="info-section">
+                    <!-- Name -->
+                    <div class="info-card">
+                        <div class="info-label" data-es="Nombre del Cliente" data-en="Customer Name"></div>
+                        <div class="info-value">Norberta Martinez Hernandez</div>
+                    </div>
+
+                    <!-- Delivery Status -->
+                    <div class="info-card">
+                        <div class="info-label" data-es="Estado de Entrega" data-en="Delivery Status"></div>
+                        <div class="mt-3">
+                            <span class="status-badge status-pending" data-es="Entrega no procesada aún" data-en="Delivery not yet processed"></span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Status -->
+                    <div class="info-card">
+                        <div class="info-label" data-es="Estado de Pago" data-en="Payment Status"></div>
+                        <div class="mt-3">
+                            <span class="status-badge status-success" data-es="Pagado" data-en="Paid"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Fan Card -->
-            <div class="card-container">
-                <div class="fan-card">
-                    <!-- Photo -->
-                    <div class="photo-container">
-                        <img id="profilePhoto" src="https://i.ibb.co/gMLMLZL0/IMG-20251109-WA0266.jpg" alt="Foto de Perfil" />
+            <!-- Location Information -->
+            <div class="glass-card rounded-2xl p-8 md:p-12 shadow-lg">
+                <h2 class="text-2xl font-bold text-gray-900 mb-8" data-es="Ubicación de Entrega" data-en="Delivery Location"></h2>
+                
+                <div class="info-section">
+                    <!-- Delivery Location -->
+                    <div class="info-card">
+                        <div class="info-label" data-es="Ubicación" data-en="Location"></div>
+                        <div class="info-value">Miami</div>
+                        <p class="text-gray-600 mt-3 text-sm" data-es="Florida, Estados Unidos" data-en="Florida, United States"></p>
                     </div>
 
-                    <!-- i dunno what to comment here 🫣 -->
-                    <div class="proof-status">
-                        <span class="proof-status-icon"> ❌ </span>
-                        <span class="proof-status-text"> Pendiente. Su entrega no pudo ser completada debido a un accidente con el repartidor. </span>
+                    <!-- Reference Information -->
+                    <div class="info-card">
+                        <div class="info-label" data-es="Número de Seguimiento" data-en="Tracking Number"></div>
+                        <div class="info-value font-mono text-lg">DEL-2024-98765</div>
                     </div>
 
-                    <!-- Details Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                        <!-- Full Name -->
-                        <div class="detail-item" style="animation-delay: 0.1s">
-                            <div class="detail-label">Nombre Completo</div>
-                            <div class="detail-value">Norberta Martinez Hernandez</div>
-                        </div>
+                    <!-- Estimated Delivery -->
+                    <div class="info-card">
+                        <div class="info-label" data-es="Entrega Estimada" data-en="Estimated Delivery"></div>
+                        <div class="info-value" data-es="Pendiente Procesamiento" data-en="Pending Processing"></div>
+                    </div>
+                </div>
+            </div>
 
-                        <!-- Date of Birth -->
-                        <div class="detail-item" style="animation-delay: 0.2s">
-                            <div class="detail-label">Fecha de Nacimiento</div>
-                            <div class="detail-value">06-06-1969</div>
-                        </div>
-
-                        <!-- Email -->
-                        <div class="detail-item" style="animation-delay: 0.3s">
-                            <div class="detail-label">Dirección de Correo</div>
-                            <div class="detail-value">Nokberta818@gmail.com</div>
-                        </div>
-
-                        <!-- Phone -->
-                        <div class="detail-item" style="animation-delay: 0.4s">
-                            <div class="detail-label">Número Telefónico</div>
-                            <div class="detail-value">+52 747 121 7688</div>
+            <!-- Timeline Section -->
+            <div class="glass-card rounded-2xl p-8 md:p-12 shadow-lg mt-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-8" data-es="Historial de Estado" data-en="Status History"></h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4">
+                        <div class="w-3 h-3 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                            <p class="font-semibold text-gray-900" data-es="Pedido Recibido" data-en="Order Received"></p>
+                            <p class="text-sm text-gray-600 mt-1" data-es="Tu pedido ha sido recibido correctamente" data-en="Your order has been received successfully"></p>
+                            <p class="text-xs text-gray-500 mt-2">28 Noviembre, 2024 - 10:30 AM</p>
                         </div>
                     </div>
-
-                    <!-- Location (full width) -->
-                    <div class="detail-item" style="animation-delay: 0.5s">
-                        <div class="detail-label">Ubicación</div>
-                        <div class="detail-value">
-                            Dr. Saúl Alarcón Abarca Housing Development
-                            <br>
-                            Chilpancingo, Guerrero, Mexico
-                        </div>
-                    </div>
-
-                    <!-- Membership Fee -->
-                    <div class="detail-item" style="animation-delay: 0.6s; margin-bottom: 1.5rem">
-                        <div class="detail-label">Cuota de Membresía</div>
-                        <div class="detail-value text-lg" style="color: var(--primary); font-weight: 800; font-size: 1.3rem;">
-                            $15,000 MXN
+                    
+                    <div class="flex items-start gap-4">
+                        <div class="w-3 h-3 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                            <p class="font-semibold text-gray-900" data-es="Pago Procesado" data-en="Payment Processed"></p>
+                            <p class="text-sm text-gray-600 mt-1" data-es="Tu pago ha sido confirmado" data-en="Your payment has been confirmed"></p>
+                            <p class="text-xs text-gray-500 mt-2">28 Noviembre, 2024 - 11:45 AM</p>
                         </div>
                     </div>
 
-                    <!-- Action Button -->
-                    <button class="btn-primary w-full text-black" style="animation-delay: 0.7s">
-                        Proceder al Pago
-                    </button>
-
-                    <!-- Info text -->
-                    <p class="text-center text-sm text-gray-600 dark:text-gray-400 mt-4 font-medium">
-                        Tu información es segura y está encriptada
-                    </p>
+                    <div class="flex items-start gap-4">
+                        <div class="w-3 h-3 bg-orange-400 rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                            <p class="font-semibold text-gray-900" data-es="En Proceso de Preparación" data-en="Being Prepared"></p>
+                            <p class="text-sm text-gray-600 mt-1" data-es="Tu entrega está siendo preparada" data-en="Your delivery is being prepared"></p>
+                            <p class="text-xs text-gray-500 mt-2" data-es="En progreso..." data-en="In progress..."></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
-
-    <!-- Sticky Music Player -->
-    <div class="music-player">
-        <button class="player-btn" id="playBtn" onclick="toggleMusic()" title="Reproducir Ana Gabriel">
-            <span id="playIcon">▶️</span>
-        </button>
-        <audio id="musicPlayer" preload="none">
-            <source src="https://anagabriel.vercel.app/Ana Gabriel - No Te Hago Falta.mp3" type="audio/mpeg">
-        </audio>
     </div>
 
     <script>
-        // Music player functionality
-        const musicPlayer = document.getElementById('musicPlayer');
-        const playBtn = document.getElementById('playBtn');
-        const playIcon = document.getElementById('playIcon');
-        let isPlaying = false;
+        let currentLanguage = 'es';
 
-        function toggleMusic() {
-            if (isPlaying) {
-                musicPlayer.pause();
-                playIcon.textContent = '♫';
-                isPlaying = false;
-                playBtn.style.animation = 'slideInLeft 0.5s ease-out, float 3s ease-in-out infinite';
-            } else {
-                musicPlayer.play().catch(err => {
-                    alert('La reproducción de audio requiere interacción del usuario.');
-                });
-                playIcon.textContent = '⏸';
-                isPlaying = true;
-                playBtn.style.animation = 'pulse-glow 2s infinite, float 3s ease-in-out infinite';
-            }
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'es' ? 'en' : 'es';
+            updatePageLanguage();
         }
 
-        // Stop music when track ends
-        musicPlayer.addEventListener('ended', () => {
-            playIcon.textContent = '♫';
-            isPlaying = false;
-            playBtn.style.animation = 'slideInLeft 0.5s ease-out, float 3s ease-in-out infinite';
-        });
+        function updatePageLanguage() {
+            const elements = document.querySelectorAll('[data-es][data-en]');
+            
+            elements.forEach(element => {
+                const text = currentLanguage === 'es' ? element.getAttribute('data-es') : element.getAttribute('data-en');
+                
+                if (element.tagName === 'SPAN' || element.tagName === 'P' || element.tagName === 'H1' || element.tagName === 'H2' || element.tagName === 'DIV') {
+                    if (element.textContent === element.getAttribute('data-es') || element.textContent === element.getAttribute('data-en') || element.classList.contains('status-badge') || element.classList.contains('header-accent') || element.classList.contains('info-label') || element.classList.contains('info-value')) {
+                        element.textContent = text;
+                    }
+                } else {
+                    element.textContent = text;
+                }
+            });
 
-        // Add smooth scroll behavior
-        document.documentElement.style.scrollBehavior = 'smooth';
+            // Update button text
+            const button = document.querySelector('button');
+            if (button) {
+                button.textContent = currentLanguage === 'es' ? 'English' : 'Español';
+            }
+
+            // Update document language
+            document.documentElement.lang = currentLanguage;
+        }
+
+        // Initialize with Spanish
+        updatePageLanguage();
     </script>
 </body>
 </html>
